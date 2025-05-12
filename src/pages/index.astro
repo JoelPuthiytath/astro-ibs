@@ -1,0 +1,27 @@
+---
+import SmartSearch from "../components/smartSearch/index.jsx";
+import Expertise from "../components/expertise/index.jsx";
+import OurWork from '../components/ourWork/index.jsx';
+import OurClients from '../components/ourClients/index.jsx';
+import ContactUs from '../components/contactUs/contactUs.jsx';
+import BaseLayout from '../layouts/BaseLayout.astro';
+import { homepageProps } from '../utils/Data.js';
+
+
+const { heroBanner, casestudy, brands, contact, header_state, partners } = homepageProps;
+---
+<BaseLayout>
+  <slot name="head">
+    <title>Your Site Title</title>
+  </slot>
+
+  <SmartSearch data={heroBanner} headerState={header_state} client:load />
+  
+  <section id="expertise">
+    <Expertise client:visible />
+  </section>
+
+  <OurWork data={casestudy} client:visible />
+  <OurClients brands={brands} partners={partners} client:visible />
+  <ContactUs data={contact} partners={partners} client:visible />
+</BaseLayout>

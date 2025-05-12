@@ -1,0 +1,31 @@
+---
+import Header from '../components/header/Header.jsx';
+import Footer from '../components/footer/Footer.jsx';
+import {
+  headerDataNavigation,
+  NewsandInsights,
+  footerProps,
+  header
+} from '../utils/Data.js';
+
+import '../styles/global.css'
+
+---
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <slot name="head" />
+  </head>
+  <body>
+    <Header
+      data={header}
+      headerData={headerDataNavigation}
+      newsInsights={NewsandInsights}
+      client:load
+    />
+    <main><slot /></main>
+    <Footer {...footerProps} client:load />
+  </body>
+</html>
