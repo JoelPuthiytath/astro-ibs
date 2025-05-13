@@ -114,7 +114,7 @@ const Header = ({ data, headerData, newsInsights }) => {
 
 //   const customStyles = getCustomStyles(isMobile);
 
-console.log(logo, logo_alternate, 'logo')
+// console.log(logo, logo_alternate, 'logo')
 
 
 
