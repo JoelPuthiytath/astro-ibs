@@ -2,17 +2,48 @@
 import Header from "../components/header/Header.jsx";
 import Footer from "../components/footer/Footer.jsx";
 import {
-  headerDataNavigation,
-  NewsandInsights,
-  footerProps,
-  header,
-} from "../utils/Data.js";
+  getHeaderDataApolloClient,
+  getHeaderNavigationData,
+  getFooterDataApolloClient,
+  getGlobalConfigData,
+} from "../utils/_apiCalls.js";
 
 import "../styles/global.css";
+import { HeaderProvider } from "../providers/HeaderProvider.jsx";
 
-const renderProductionScripts = true;
 
-// console.log(process.env.NEXT_PUBLIC_GTM_ID,"import.meta.env.PUBLIC_GTM_ID");
+let header = null,
+  navigationData = null,
+  footerProps = null,
+  globalConfig = null;
+try {
+  [header, navigationData, footerProps, globalConfig] = await Promise.all([
+    getHeaderDataApolloClient(),
+    getHeaderNavigationData(),
+    getFooterDataApolloClient(),
+    getGlobalConfigData(),
+  ]);
+} catch (error) {
+  console.error("Error fetching initial data:", error);
+}
+
+if (!navigationData) {
+  console.error("Navigation data is unavailable.");
+}
+
+const {
+  renderNavigation: headerDataNavigation = null,
+  newsAndInsights: NewsandInsights = null,
+} = navigationData || {};
+
+const renderProductionScripts = import.meta.env.PUBLIC_MODE === "production";
+
+const favicon =
+  globalConfig?.globalConfig?.data?.attributes?.favicon?.data?.attributes
+    ?.url || "";
+
+    // console.log(navigationData,"navigationData");
+
 ---
 
 <!doctype html>
@@ -20,9 +51,16 @@ const renderProductionScripts = true;
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta
+      name="ahrefs-site-verification"
+      content="0a681ca90fb1925fcccf13de1ca61c3270de1a14f5ec1274000f2b35600f465f"
+    />
+
+    {favicon && <link rel="icon" href={favicon} />}
+
     <slot name="head" />
 
-    {
+    <!-- {
       renderProductionScripts && (
         <script is:inline>
           {`
@@ -34,10 +72,10 @@ const renderProductionScripts = true;
         `}
         </script>
       )
-    }
+    } -->
   </head>
   <body class="antialiased">
-    {
+    <!-- {
       renderProductionScripts && (
         <noscript>
           <iframe
@@ -48,15 +86,18 @@ const renderProductionScripts = true;
           />
         </noscript>
       )
-    }
+    } -->
+ <HeaderProvider>
 
-    <Header
-      data={header}
-      headerData={headerDataNavigation}
-      newsInsights={NewsandInsights}
-      client:load
-    />
-    <main><slot /></main>
-    <Footer {...footerProps} client:load />
+   <Header
+     data={header}
+     headerData={headerDataNavigation}
+     newsInsights={NewsandInsights}
+     client:load
+   />
+   <main><slot /></main>
+   <Footer {...footerProps} client:load />
+
+ </HeaderProvider>
   </body>
 </html>

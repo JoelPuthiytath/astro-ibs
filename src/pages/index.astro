@@ -1,24 +1,46 @@
 ---
 import SmartSearch from "../components/smartSearch/index.jsx";
 import Expertise from "../components/expertise/index.jsx";
-import OurWork from '../components/ourWork/index.jsx';
-import OurClients from '../components/ourClients/index.jsx';
-import ContactUs from '../components/contactUs/contactUs.jsx';
-import BaseLayout from '../layouts/BaseLayout.astro';
-import { homepageProps } from '../utils/Data.js';
+import OurWork from "../components/ourWork/index.jsx";
+import OurClients from "../components/ourClients/index.jsx";
+import ContactUs from "../components/contactUs/contactUs.jsx";
+import BaseLayout from "../layouts/BaseLayout.astro";
+// import { homepageProps } from "../utils/Data.js";
+import { getHomePageDataApolloClient, getServicesByParentData } from "../utils/_apiCalls";
 
 
-const { heroBanner, casestudy, brands, contact, header_state, partners } = homepageProps;
+const homepageProps = await getHomePageDataApolloClient();
+const {
+  heroBanner,
+  expertise,
+  casestudy,
+  brands,
+  contact,
+  header_state,
+  partners,
+} = homepageProps;
+
+const { title, image, services } = expertise;
+const parentServiceSlugChunk = services.data.map(
+  ({ attributes }) => attributes.slug
+);
+const servicesByParent = await getServicesByParentData(parentServiceSlugChunk);
+const expertiseProps = {
+  title,
+  image,
+  servicesByParent,
+};
 ---
+
 <BaseLayout>
   <slot name="head">
-    <title>Your Site Title</title>
+    <title>ibs fulcro</title>
   </slot>
 
   <SmartSearch data={heroBanner} headerState={header_state} client:load />
-  
+
   <section id="expertise">
-    <Expertise client:visible />
+    <Expertise {...expertiseProps} client:visible />
   </section>
 
   <OurWork data={casestudy} client:visible />

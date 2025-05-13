@@ -1,18 +1,18 @@
-
 "use client";
 import React, { useLayoutEffect, useRef } from "react";
 import { gsap } from "gsap";
 import Scroller from "../scroller/Scroller.jsx";
 import "../../styles/exp.css";
 
-export default function Expertise() {
+
+export default function Expertise({ title, image, servicesByParent }) {
   const containerRef = useRef(null);
   const galleryRef = useRef(null);
 
   useLayoutEffect(() => {
     if (!containerRef.current || !galleryRef.current) return;
 
-    let ctx;  
+    let ctx;
     let mm;
 
     // Dynamically load ScrollTrigger only in browser
@@ -44,6 +44,8 @@ export default function Expertise() {
     };
   }, []);
 
+   const creative = image?.data?.attributes;
+
   return (
     <div ref={containerRef}>
       <div
@@ -53,26 +55,31 @@ export default function Expertise() {
         <div className="left lg:w-1/2">
           <div className="desktopContent">
             <h2 className="text-black text-2xl uppercase font-semibold my-16">
-              our services
+              {title}
             </h2>
-            <Scroller />
+            <Scroller data={servicesByParent} />
           </div>
         </div>
 
         <div className="right lg:w-1/2 lg:flex lg:flex-col lg:justify-start">
           <div className="mobileContent">
             <h2 className="text-black text-2xl uppercase font-semibold mt-16">
-              our services
+              {title}
             </h2>
-            <Scroller />
+            <Scroller data={servicesByParent} />
           </div>
 
           <div className="desktopPhotos">
             <div className="desktopPhoto red">
               <img
-                src="https://fulcro-prod-website-assets.fulcroworld.com/assets/media/our_expertise_2ae9b27bb8.webp"
-                alt="our-expertise"
-                className="w-full h-auto"
+                src={creative?.url}
+                alt={
+                  creative?.alternativeText
+                    ? creative?.alternativeText
+                    : "our-expertise-image"
+                }
+                width={creative?.width}
+                height={creative?.height}
                 loading="lazy"
               />
             </div>

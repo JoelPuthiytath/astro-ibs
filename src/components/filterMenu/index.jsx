@@ -1,5 +1,4 @@
 import React, { useState } from "react";
-import Image from "next/image";
 import FilterItem from "./FilteredItem";
 
 const FilterComponent = ({ dataList, onFilter, onReset }) => {
@@ -59,7 +58,7 @@ const FilterComponent = ({ dataList, onFilter, onReset }) => {
           className="px-4 py-2 bg-[#f5f5f5] rounded-[10px] shadow-lg flex gap-2 text-lg font-semibold items-center hover:text-royalBlue transition-transform duration-150 active:scale-95"
           onClick={() => setMenuVisible(!menuVisible)}
         >
-          <Image
+          <img
             src="/images/filter.svg"
             width={20}
             height={20}

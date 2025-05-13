@@ -1,5 +1,4 @@
 import { motion, AnimatePresence } from "framer-motion";
-import Image from "next/image";
 import "../../styles/macbook.css";
 
 const MacBookLayout = ({
@@ -23,7 +22,7 @@ const MacBookLayout = ({
             transition={{ duration: 0.4 }}
             className="viewport"
           >
-            <Image
+            <img
               src={projectImage}
               layout="fill"
               objectFit="cover"

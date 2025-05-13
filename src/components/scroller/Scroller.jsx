@@ -5,7 +5,7 @@ import { ScrollTrigger } from "gsap/ScrollTrigger";
 import Lenis from "lenis";
 import "../../styles/exp.css";
 import { isMobile, isTablet } from "react-device-detect";
-// import { accordionData } from "../../utils/Data";
+import Link from '../Link';
 
 const lottieImageData = [
   { id: 0, image: "/images/lottie_img/Strategy.webp" },
@@ -91,211 +91,87 @@ const Accordion = memo(
   )
 );
 
-export default function Scroller() {
+const convertToAccordionData = (data) => {
+  const accordionData = [];
+  const MAX_SUBSERVICES_PER_ACCORDION = 5;
+
+  const servicesByParent = data?.reduce((acc, { attributes: serviceData }) => {
+    const parentData = serviceData.parent_service.data.attributes;
+    const parentSlug = parentData.slug;
+
+    let parentEntry = acc.find((entry) => entry.slug === parentSlug);
+
+    if (!parentEntry) {
+      parentEntry = {
+        name: parentData.name,
+        slug: parentData.slug,
+        description: parentData.description,
+        children: [],
+      };
+      acc.push(parentEntry);
+    }
+
+    parentEntry.children.push({
+      name: serviceData.name,
+      slug: serviceData.slug,
+      description: serviceData.description,
+    });
+
+    return acc;
+  }, []);
+
+  servicesByParent.forEach((item, index) => {
+    const title = item.name;
+    const subServices = item.children.map((subItem) => ({
+      title: subItem.name,
+      slug: subItem.slug,
+    }));
+    const subServiceChunk = subServices.slice(0, MAX_SUBSERVICES_PER_ACCORDION);
+    const slug = item.slug;
+
+    const lists = subServiceChunk.map((subService, j) => (
+      <Link
+        href={`/${slug}/${subService.slug}`}
+        className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
+        key={j}
+      >
+        {subService.title}
+      </Link>
+    ));
+
+    const list1 = lists.slice(0, 1);
+    const list2 = lists.slice(1, 2);
+    const list3 = lists.slice(2, 3);
+    const list4 = lists.slice(3, 4);
+    const list5 = lists.slice(4, 5);
+
+    const id = `${index}-0`;
+    const description = item.description ? (
+      <p className="text-[1em] font-[500] leading-[36px]">{item.description}</p>
+    ) : null;
+
+    accordionData.push({
+      id,
+      title,
+      description,
+      list1,
+      list2,
+      list3,
+      list4,
+      list5,
+      slug,
+    });
+  });
+
+  return accordionData;
+};
+
+
+export default function Scroller({ data }) {
 //   console.log(accordionData, "accordin dataS");
+ const accordionData = convertToAccordionData(data);
   
-    const accordionData = [
-    {
-      id: "0-0",
-      title: "Digital Strategy & Consulting",
-      description: null,
-      list1: [
-        <a
-          href="/digital-strategy-and-consulting/digital-transformation"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          
-          key="digital-transformation"
-        >
-          Digital Transformation
-        </a>,
-      ],
-      list2: [
-        <a
-          href="/digital-strategy-and-consulting/cx-strategy"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="cx-strategy"
-        >
-          CX Strategy
-        </a>,
-      ],
-      list3: [
-        <a
-          href="/digital-strategy-and-consulting/content-strategy"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="content-strategy"
-        >
-          Content Strategy
-        </a>,
-      ],
-      list4: [],
-      list5: [],
-      slug: "digital-strategy-and-consulting",
-    },
-    {
-      id: "1-0",
-      title: "Experience Design",
-      description: null,
-      list1: [
-        <a
-          href="/experience-design/ux-consultancy"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="ux-consultancy"
-        >
-          UX Consultancy
-        </a>,
-      ],
-      list2: [
-        <a
-          href="/experience-design/design-system"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="design-system"
-        >
-          Design System
-        </a>
-      ],
-      list3: [
-        <a
-          href="/experience-design/ui-ux-design"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="ui-ux-design"
-        >
-          UI/UX Design
-        </a>,
-      ],
-      list4: [],
-      list5: [],
-      slug: "experience-design",
-    },
-    {
-      id: "2-0",
-      title: "Technology & Engineering",
-      description: null,
-      list1: [
-        <a
-          href="/technology-and-engineering/web-development"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="web-development"
-        >
-          Web Development
-        </a>
-      ],
-      list2: [
-        <a
-          href="/technology-and-engineering/content-management-system"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="content-management-system"
-        >
-          CMS Solutions
-        </a>
-      ],
-      list3: [
-        <a
-          href="/technology-and-engineering/commerce"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="commerce"
-        >
-          Commerce
-        </a>
-      ],
-      list4: [
-        <a
-          href="/technology-and-engineering/mobile-apps"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="mobile-apps"
-        >
-          Mobile Apps
-        </a>,
-      ],
-      list5: [
-        <a
-          href="/technology-and-engineering/cloud-and-dev-sec-ops"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="cloud-and-dev-sec-ops"
-        >
-          Cloud & DevSecOps
-        </a>
-      ],
-      slug: "technology-and-engineering",
-    },
-    {
-      id: "3-0",
-      title: "Digital Marketing",
-      description: null,
-      list1: [
-        <a
-          href="/digital-marketing/brand-digital-strategy"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="brand-digital-strategy"
-        >
-          Brand Digital Strategy
-        </a>
-      ],
-      list2: [
-        <a
-          href="/digital-marketing/campaign-communication"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="campaign-communication"
-        >
-          Campaign Communication
-        </a>
-      ],
-      list3: [
-        <a
-          href="/digital-marketing/digital-films-and-shorts"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="digital-films-and-shorts"
-        >
-          Digital Films & Shorts
-        </a>,
-      ],
-      list4: [
-        <a
-          href="/digital-marketing/social-media-management"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="social-media-management"
-        >
-          Social Media Management
-        </a>
-      ],
-      list5: [
-        <a
-          href="/digital-marketing/content-marketing"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="content-marketing"
-        >
-          Content Marketing
-        </a>
-      ],
-      slug: "digital-marketing",
-    },
-    {
-      id: "4-0",
-      title: "AI/ML & Emerging Tech",
-      description: null,
-      list1: [
-        <a
-          href="/ai-ml-and-emerging-tech/ai-ml-solutions"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="ai-ml-solutions"
-        >
-          AI/ML Solutions
-        </a>
-      ],
-      list2: [
-        <a
-          href="/ai-ml-and-emerging-tech/immersive-technologies-ar-vr-and-mr"
-          className="font-[500] leading-[36px] legacy:leading-[28px] 2xl:leading-[36px] cursor-pointer capitalize service-list-item 2xl:text-[20px] text-[16px] legacy:text-[18px] xl:mb-4 lg:mb-2 mb-0 accordion-list-item"
-          key="immersive-technologies-ar-vr-and-mr"
-        >
-          Immersive Technologies: AR, VR, & MR
-        </a>
-      ],
-      list3: [],
-      list4: [],
-      list5: [],
-      slug: "ai-ml-and-emerging-tech",
-    },
-  ];
+
 
   const accordionRefs = useRef(accordionData.map(() => React.createRef()));
   const listRefs = useRef(accordionData.map(() => React.createRef()));
